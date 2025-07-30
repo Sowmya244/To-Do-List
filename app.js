@@ -117,6 +117,7 @@ function startEdit(idx) {
     todoDate.value = todo.due;
     todoPriority.value = todo.priority;
     editIndex = idx;
+}
 // Save and load from localStorage
 function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
@@ -126,7 +127,6 @@ function loadTodos() {
     if (data) {
         todos = JSON.parse(data);
     }
-}
 }
 
 function scheduleReminder(idx) {
