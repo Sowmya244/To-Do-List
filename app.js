@@ -11,14 +11,22 @@ const todoDate = document.getElementById('todo-date');
 const todoPriority = document.getElementById('todo-priority');
 const todoList = document.getElementById('todo-list');
 const searchBar = document.getElementById('search-bar');
+const filterBtns = document.querySelectorAll('.filter-btn');
+let currentFilter = 'all';
 
-function renderTodos(filter = '') {
+function renderTodos(searchFilter = '') {
     todoList.innerHTML = '';
-    todos.forEach((todo, idx) => {
+    let filtered = todos;
+    if (currentFilter === 'active') {
+        filtered = todos.filter(t => !t.completed);
+    } else if (currentFilter === 'completed') {
+        filtered = todos.filter(t => t.completed);
+    }
+    filtered.forEach((todo, idx) => {
         if (
-            filter &&
-            !todo.title.toLowerCase().includes(filter) &&
-            !todo.desc.toLowerCase().includes(filter)
+            searchFilter &&
+            !todo.title.toLowerCase().includes(searchFilter) &&
+            !todo.desc.toLowerCase().includes(searchFilter)
         ) return;
         const li = document.createElement('li');
         li.className = `${todo.priority}${todo.completed ? ' completed' : ''}`;
@@ -50,19 +58,19 @@ function renderTodos(filter = '') {
         const completeBtn = document.createElement('button');
         completeBtn.className = 'complete-btn';
         completeBtn.textContent = todo.completed ? 'Undo' : 'Complete';
-        completeBtn.onclick = () => markComplete(idx);
+        completeBtn.onclick = () => markComplete(todos.indexOf(todo));
         actions.appendChild(completeBtn);
         // Edit
         const editBtn = document.createElement('button');
         editBtn.className = 'edit-btn';
         editBtn.textContent = 'Edit';
-        editBtn.onclick = () => startEdit(idx);
+        editBtn.onclick = () => startEdit(todos.indexOf(todo));
         actions.appendChild(editBtn);
         // Delete
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = 'Delete';
-        deleteBtn.onclick = () => deleteTodo(idx);
+        deleteBtn.onclick = () => deleteTodo(todos.indexOf(todo));
         actions.appendChild(deleteBtn);
         li.appendChild(actions);
         todoList.appendChild(li);
@@ -84,6 +92,7 @@ function addTodo(e) {
         todos.push(todo);
         scheduleReminder(todos.length - 1);
     }
+    saveTodos();
     todoForm.reset();
     renderTodos(searchBar.value.trim().toLowerCase());
 }
@@ -91,11 +100,13 @@ function addTodo(e) {
 function deleteTodo(idx) {
     todos.splice(idx, 1);
     clearReminder(idx);
+    saveTodos();
     renderTodos(searchBar.value.trim().toLowerCase());
 }
 
 function markComplete(idx) {
     todos[idx].completed = !todos[idx].completed;
+    saveTodos();
     renderTodos(searchBar.value.trim().toLowerCase());
 }
 
@@ -106,6 +117,16 @@ function startEdit(idx) {
     todoDate.value = todo.due;
     todoPriority.value = todo.priority;
     editIndex = idx;
+// Save and load from localStorage
+function saveTodos() {
+    localStorage.setItem('todos', JSON.stringify(todos));
+}
+function loadTodos() {
+    const data = localStorage.getItem('todos');
+    if (data) {
+        todos = JSON.parse(data);
+    }
+}
 }
 
 function scheduleReminder(idx) {
@@ -150,6 +171,16 @@ todoForm.addEventListener('submit', addTodo);
 searchBar.addEventListener('input', e => {
     renderTodos(e.target.value.trim().toLowerCase());
 });
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+        filterBtns.forEach(b => b.style.background = '#fff');
+        this.style.background = '#43c6ac';
+        this.style.color = '#fff';
+        currentFilter = this.getAttribute('data-filter');
+        renderTodos(searchBar.value.trim().toLowerCase());
+    });
+});
 
-// Initial render
+// Initial load
+loadTodos();
 renderTodos();
