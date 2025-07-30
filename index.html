@@ -9,6 +9,11 @@
 <body>
     <div class="container">
         <h1>To-Do List</h1>
+        <div id="filters" style="display:flex; gap:10px; margin-bottom:14px;">
+            <button type="button" class="filter-btn" data-filter="all" style="padding:6px 16px; border-radius:6px; border:1.5px solid #43c6ac; background:#fff; color:#43c6ac; font-weight:bold; cursor:pointer;">All</button>
+            <button type="button" class="filter-btn" data-filter="active" style="padding:6px 16px; border-radius:6px; border:1.5px solid #43c6ac; background:#fff; color:#43c6ac; font-weight:bold; cursor:pointer;">Active</button>
+            <button type="button" class="filter-btn" data-filter="completed" style="padding:6px 16px; border-radius:6px; border:1.5px solid #43c6ac; background:#fff; color:#43c6ac; font-weight:bold; cursor:pointer;">Completed</button>
+        </div>
         <input type="text" id="search-bar" placeholder="Search tasks..." style="margin-bottom:14px; padding:10px 14px; border-radius:8px; border:1.5px solid #43c6ac; font-size:1em; outline:none; width:100%; transition:border 0.2s;" />
         <form id="todo-form" style="flex-direction:column; gap:10px;">
             <input type="text" id="todo-title" placeholder="Title" required style="padding:10px 14px; border-radius:8px; border:1.5px solid #43c6ac; font-size:1em; outline:none;" />
@@ -27,4 +32,4 @@
     </div>
     <script src="app.js"></script>
 </body>
-</html>
+</html>    
